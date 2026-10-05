@@ -4,12 +4,23 @@ import asyncio
 from collections.abc import Sequence
 
 from . import api
-from .models import VerificationResult
+from .finder import Sample
+from .models import FinderResult, VerificationResult
 from .options import Options
 
 
 def verify(email: str, *, options: Options | None = None) -> VerificationResult:
     return asyncio.run(api.verify(email, options=options))
+
+
+def find(
+    name: str,
+    domain: str,
+    *,
+    samples: Sequence[Sample] = (),
+    options: Options | None = None,
+) -> FinderResult:
+    return asyncio.run(api.find(name, domain, samples=samples, options=options))
 
 
 def verify_many(

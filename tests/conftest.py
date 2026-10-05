@@ -37,6 +37,9 @@ class Ctx:
     results: list[VerificationResult] = field(default_factory=list)
     streamed: list[tuple[int, VerificationResult]] = field(default_factory=list)
     probes_before_recheck: int = 0
+    samples: list[tuple[str, str]] = field(default_factory=list)
+    finder: object = None
+    find_error: object = None
 
     def options(self) -> Options:
         return Options(

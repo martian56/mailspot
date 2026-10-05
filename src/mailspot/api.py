@@ -4,7 +4,8 @@ import asyncio
 from collections.abc import AsyncIterator, Sequence
 
 from .engine import verify_one
-from .models import VerificationResult
+from .finder import Sample, find_one
+from .models import FinderResult, VerificationResult
 from .options import Options
 from .runtime import Runtime
 
@@ -12,6 +13,17 @@ from .runtime import Runtime
 async def verify(email: str, *, options: Options | None = None) -> VerificationResult:
     runtime = Runtime.build(options or Options())
     return await verify_one(email, runtime)
+
+
+async def find(
+    name: str,
+    domain: str,
+    *,
+    samples: Sequence[Sample] = (),
+    options: Options | None = None,
+) -> FinderResult:
+    runtime = Runtime.build(options or Options())
+    return await find_one(name, domain, samples, runtime)
 
 
 async def verify_many(
