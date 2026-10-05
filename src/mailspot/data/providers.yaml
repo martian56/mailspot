@@ -1,5 +1,5 @@
 providers:
-  - name: google
+  - name: google_workspace
     domains: [gmail.com, googlemail.com]
     mx_patterns: ["*.google.com", "aspmx*", "*.googlemail.com", "*.psmtp.com"]
     verifiable: false
@@ -11,7 +11,7 @@ providers:
       domain_aliases:
         googlemail.com: gmail.com
 
-  - name: microsoft
+  - name: microsoft365
     domains: [outlook.com, hotmail.com, live.com, msn.com, hotmail.co.uk, live.co.uk]
     mx_patterns: ["*.outlook.com", "*.protection.outlook.com", "*.hotmail.com"]
     verifiable: false

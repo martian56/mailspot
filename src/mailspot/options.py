@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass, field, replace
+from typing import Any
 
 from .errors import ConfigurationError
 from .infra.hooks import Hooks
@@ -49,5 +50,5 @@ class Options:
             if getattr(self, name) <= 0:
                 raise ConfigurationError(f"{name} must be greater than 0")
 
-    def with_(self, **changes: object) -> Options:
+    def with_(self, **changes: Any) -> Options:
         return replace(self, **changes)

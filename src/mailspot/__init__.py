@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from . import sync
+from .api import recheck, verify, verify_many, verify_stream
 from .errors import ConfigurationError, MailspotError
 from .models import (
     Candidate,
@@ -29,7 +31,12 @@ __all__ = [
     "Status",
     "VerificationResult",
     "canonical",
+    "recheck",
     "suggest",
+    "sync",
+    "verify",
+    "verify_many",
+    "verify_stream",
 ]
 
 __version__ = "0.1.0"
