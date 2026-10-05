@@ -40,6 +40,8 @@ class Ctx:
     samples: list[tuple[str, str]] = field(default_factory=list)
     finder: object = None
     find_error: object = None
+    cli_result: object = None
+    csv_emails: list[str] = field(default_factory=list)
 
     def options(self) -> Options:
         return Options(
@@ -168,57 +170,57 @@ def given_host_answers_two(ctx: Ctx, first: str, second: str) -> None:
 
 @given(parsers.parse('"{name}" is not a catch-all server'))
 def given_not_catch_all(ctx: Ctx, name: str) -> None:
-    ctx.prober.host(ctx.host_of(name)).catch_all = False
+    ctx.prober.host(name).catch_all = False
 
 
 @given(parsers.parse('"{host}" accepts every address'))
 def given_accepts_every(ctx: Ctx, host: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).catch_all = True
+    ctx.prober.host(host).catch_all = True
 
 
 @given(parsers.parse('"{host}" rejects unknown addresses with code 550'))
 def given_rejects_unknown(ctx: Ctx, host: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).catch_all = False
+    ctx.prober.host(host).catch_all = False
 
 
 @given(parsers.parse('"{host}" accepts "{email}"'))
 def given_host_accepts(ctx: Ctx, host: str, email: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).accepts.add(email)
+    ctx.prober.host(host).accepts.add(email)
 
 
 @given(parsers.parse('"{host}" accepts only "{email}"'))
 def given_host_accepts_only(ctx: Ctx, host: str, email: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).accepts.add(email)
+    ctx.prober.host(host).accepts.add(email)
 
 
 @given(parsers.parse('"{host}" rejects "{email}" with code 550'))
 def given_host_rejects(ctx: Ctx, host: str, email: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).rejects.add(email)
+    ctx.prober.host(host).rejects.add(email)
 
 
 @given(parsers.parse('"{host}" replies to "{email}" with code 451'))
 def given_host_greylist(ctx: Ctx, host: str, email: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).greylisted.add(email)
+    ctx.prober.host(host).greylisted.add(email)
 
 
 @given(parsers.parse('"{host}" replies to "{email}" with code 451 the first time'))
 def given_host_greylist_first(ctx: Ctx, host: str, email: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).greylisted.add(email)
+    ctx.prober.host(host).greylisted.add(email)
 
 
 @given(parsers.parse('"{host}" accepts "{email}" on a later attempt'))
 def given_host_accepts_later(ctx: Ctx, host: str, email: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).accepts.add(email)
+    ctx.prober.host(host).accepts.add(email)
 
 
 @given(parsers.parse('"{host}" does not answer on port 25'))
 def given_host_unreachable(ctx: Ctx, host: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).reachable = False
+    ctx.prober.host(host).reachable = False
 
 
 @given(parsers.parse('the catch-all probe to "{host}" times out'))
 def given_catch_all_timeout(ctx: Ctx, host: str) -> None:
-    ctx.prober.host(ctx.host_of(host)).catch_all_probe_unreachable = True
+    ctx.prober.host(host).catch_all_probe_unreachable = True
 
 
 @given("SMTP verification is disabled")

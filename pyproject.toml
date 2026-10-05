@@ -59,6 +59,9 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
 
+[tool.ruff.lint.per-file-ignores]
+"src/mailspot/cli.py" = ["B008"]
+
 [tool.mypy]
 python_version = "3.11"
 strict = true
