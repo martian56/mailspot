@@ -40,6 +40,20 @@ Feature: Command-line interface
     Then "results.csv" has a row per input
     And "results.csv" has the columns "email, status, decision, confidence, reason"
 
+  Scenario: Suggest prints a correction for a typo
+    When I run "mailspot suggest jane@gmial.com"
+    Then the output contains "jane@gmail.com"
+    And the exit code is 0
+
+  Scenario: Suggest prints nothing for a correct address
+    When I run "mailspot suggest jane@gmail.com"
+    Then stdout is empty
+    And the exit code is 0
+
+  Scenario: Canonical prints the deduped form
+    When I run "mailspot canonical j.a.ne+news@gmail.com"
+    Then the output contains "jane@gmail.com"
+
   Scenario: A usage error exits non-zero
     When I run "mailspot bulk verify missing-file.csv --column email"
     Then the exit code is 1

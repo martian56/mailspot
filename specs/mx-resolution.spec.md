@@ -11,6 +11,9 @@ No MX means no delivery, which is a strong, cheap signal of an invalid address.
 - If there are no MX records, fall back to the domain's A/AAAA record, because
   the RFCs allow a domain with an address record but no MX to receive mail at
   that host. Record that this was an implicit fallback, not a real MX.
+- A null MX (a single MX record of `.`, per RFC 7505) means the domain has
+  explicitly declared that it accepts no mail. Treat the address as invalid, and
+  do not fall back to A/AAAA.
 - If there is neither MX nor A/AAAA, the domain cannot receive mail.
 
 ## Provider fingerprinting
@@ -38,11 +41,12 @@ run over many addresses at the same domain resolves MX once.
 
 ## Output
 
-Populates `checks.mx = { found, hosts, provider }`.
+Populates `checks.mx = { found, hosts, provider, null_mx }`.
 
 - `found`: true if MX or an A/AAAA fallback exists.
 - `hosts`: the ordered list of mail hosts.
 - `provider`: the fingerprinted provider name, or `null`.
+- `null_mx`: true when the domain declared a null MX (accepts no mail).
 
 When the domain resolves but has no mail route (and it was not a transient
 error), the overall result is `status=invalid`, `decision=skip`.

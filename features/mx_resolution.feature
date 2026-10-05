@@ -30,6 +30,12 @@ Feature: MX resolution
     When I verify "jane@nope.example"
     Then the status is "invalid"
 
+  Scenario: A null MX domain accepts no mail and is invalid
+    Given the domain "noemail.com" has a null MX record
+    When I verify "jane@noemail.com"
+    Then the status is "invalid"
+    And the reason mentions the domain accepts no mail
+
   Scenario: A transient DNS failure is not a verdict
     Given DNS for "acme.com" times out
     When I verify "jane@acme.com"

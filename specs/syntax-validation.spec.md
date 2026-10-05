@@ -34,10 +34,12 @@ verification immediately.
 
 ## Output
 
-Populates `checks.syntax = { valid, normalized, reason }`.
+Populates `checks.syntax = { valid, normalized, canonical, reason }`.
 
 - `valid`: boolean.
 - `normalized`: the cleaned address used by every later step.
+- `canonical`: the provider-canonical mailbox for dedup (see
+  `normalization.spec.md`).
 - `reason`: on failure, the specific rule that was broken, in plain language.
 
 When `valid` is false, the overall result is `status=invalid`, `decision=skip`,

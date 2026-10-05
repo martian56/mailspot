@@ -19,7 +19,7 @@ mailspot verify jane.doe@acme.com --no-smtp
   confidence, and the one-sentence reason.
 - `--json`: the full `VerificationResult` as JSON.
 - Flags mirror `Options`: `--no-smtp`, `--no-catch-all`, `--timeout`,
-  `--concurrency`, `--rate`, `--probe-identity`.
+  `--concurrency`, `--rate`, `--probe-identity`, `--proxy`.
 
 ### `mailspot find`
 Find the likely address for a person.
@@ -48,6 +48,35 @@ mailspot bulk find people.csv --name-column name --domain-column domain --out re
   CSV (column order per `bulk-processing.spec.md`).
 - Shows progress on stderr; the CSV goes to `--out` or stdout.
 - Respects the same `Options` flags.
+
+### `mailspot suggest`
+Print a typo correction for an address, if there is a likely one.
+
+```
+mailspot suggest jane@gmial.com      ->  jane@gmail.com
+mailspot suggest jane@acme.com       ->  (no suggestion)
+```
+
+Exits 0 whether or not a suggestion is found; prints nothing extra when there is
+none, so it is easy to use in a script.
+
+### `mailspot canonical`
+Print the provider-canonical form of an address, for dedup.
+
+```
+mailspot canonical j.a.ne+news@gmail.com   ->  jane@gmail.com
+```
+
+### `mailspot bulk recheck`
+Re-run the deferred rows from an earlier bulk result.
+
+```
+mailspot bulk recheck results.csv --out results.csv
+```
+
+Reads a results CSV, re-verifies only the rows marked `deferred`, and writes the
+updated set. Use it a few minutes after the first run to settle greylisted
+addresses.
 
 ## Output conventions
 

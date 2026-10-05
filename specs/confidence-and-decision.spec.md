@@ -7,7 +7,8 @@ verdict, and it lives in orchestration, above the checks.
 ## Inputs
 
 The outputs of every check that ran: syntax, MX, catch-all, SMTP, and the three
-classification flags, plus whether each one ran at all.
+classification flags, plus whether each one ran at all, plus the provider
+strategy for the domain.
 
 ## Status
 
@@ -17,11 +18,15 @@ The honest classification of the evidence:
   a 5xx SMTP rejection on a non-catch-all domain.
 - **valid**: a 2xx SMTP acceptance on a domain proven *not* catch-all, with no
   disqualifier.
-- **risky**: plausible but unproven: catch-all domain, or a role address, or an
-  SMTP success on a domain whose catch-all status is unknown, or a disposable
-  domain that is otherwise deliverable.
+- **risky**: plausible but unproven: catch-all domain, a role address, a
+  known-unverifiable provider, an SMTP success on a domain whose catch-all status
+  is unknown, or a disposable domain that is otherwise deliverable.
 - **unknown**: syntax and MX are fine, but the decisive checks could not run
   (SMTP skipped/blocked and catch-all untested). Not enough to call either way.
+
+A 4xx that stayed temporary after retries does not change the status to invalid.
+It sets `deferred` on the result so the address can be re-checked, and the status
+reflects only the evidence gathered so far (usually `unknown`).
 
 Precedence is top-down: a hard disqualifier makes it `invalid` regardless of
 anything else; otherwise the strongest available positive or risk signal wins.
@@ -38,6 +43,9 @@ An additive model over the evidence, not a black box. Roughly:
 - Missing evidence (SMTP skipped, catch-all untested) caps the score below the
   level a full, clean verification could reach. You cannot be highly confident
   on partial evidence.
+- A known-unverifiable provider caps the score the same way: a 2xx from Gmail or
+  Outlook is not evidence, so it cannot lift the score into the confident-valid
+  band.
 - Risk flags (catch-all, role, disposable) apply defined reductions.
 
 The exact weights are fixed in the implementation and covered by tests; the

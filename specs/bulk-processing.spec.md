@@ -34,6 +34,15 @@ resolve-once-per-domain and grouping decisions from the architecture pay off.
 - A whole-domain failure (DNS down for that domain) fails only that domain's
   addresses, each with the reason, and the rest of the batch proceeds.
 
+## Deferred re-check
+
+Addresses that came back `deferred` (a greylist that stayed temporary after the
+inline retries) are the ones worth a second look. `recheck(results)` takes a
+batch of results and re-runs only the deferred ones, returning an updated batch
+with the rest passed through unchanged. The caller decides how long to wait
+before calling it; greylisting usually clears within a few minutes to half an
+hour. This keeps a greylisted but real address from ever being reported invalid.
+
 ## CSV (used by the CLI)
 
 - Read addresses from a CSV: either a single-column file, or a named column in a

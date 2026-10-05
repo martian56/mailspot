@@ -44,3 +44,14 @@ Feature: Bulk processing
     When I stream-verify 3 addresses at "acme.com"
     Then each result is yielded as it completes
     And each yielded result carries its input index
+
+  Scenario: Recheck re-runs only the deferred rows
+    Given a mail host that answers for "acme.com"
+    And "greylist.com" defers every probe on the first attempt
+    When I verify these addresses:
+      | jane@acme.com      |
+      | john@greylist.com  |
+    And "greylist.com" accepts on a later attempt
+    And I recheck the results
+    Then only "john@greylist.com" is re-verified
+    And "jane@acme.com" is passed through unchanged

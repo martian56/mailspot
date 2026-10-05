@@ -18,11 +18,19 @@ Feature: SMTP verification
     Then the SMTP check reports not deliverable
     And the status is "invalid"
 
-  Scenario: A greylisting response is retried then left indeterminate
+  Scenario: A greylisting response is retried then deferred, never invalid
     Given "mail.acme.com" replies to "jane@acme.com" with code 451
     When I verify "jane@acme.com"
-    Then the SMTP probe is retried once
-    And the SMTP check reports no verdict
+    Then the SMTP probe is retried
+    And the result is marked deferred
+    And the status is not "invalid"
+
+  Scenario: A deferred address clears on recheck once greylisting lifts
+    Given "mail.acme.com" replies to "jane@acme.com" with code 451 the first time
+    And "mail.acme.com" accepts "jane@acme.com" on a later attempt
+    When I verify "jane@acme.com"
+    And I recheck the deferred results
+    Then the status is "valid"
 
   Scenario: SMTP is skipped when disabled, with a reason
     Given SMTP verification is disabled
