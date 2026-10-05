@@ -1,10 +1,3 @@
-"""The interfaces the core depends on, so implementations stay swappable.
-
-DNS and SMTP are reached only through these protocols. The real versions live
-next to this file; tests pass fakes. Nothing in the core imports a concrete
-network client directly.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -13,8 +6,6 @@ from typing import Protocol, runtime_checkable
 
 @dataclass(frozen=True)
 class MxAnswer:
-    """What a DNS lookup tells us about a domain's ability to receive mail."""
-
     hosts: tuple[str, ...] = ()
     domain_exists: bool = True
     null_mx: bool = False
@@ -28,8 +19,6 @@ class MxAnswer:
 
 @dataclass(frozen=True)
 class SmtpReply:
-    """The outcome of one SMTP conversation up to RCPT TO."""
-
     connected: bool
     code: int | None = None
     message: str = ""

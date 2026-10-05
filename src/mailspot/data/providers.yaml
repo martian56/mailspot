@@ -1,0 +1,47 @@
+providers:
+  - name: google
+    domains: [gmail.com, googlemail.com]
+    mx_patterns: ["*.google.com", "aspmx*", "*.googlemail.com", "*.psmtp.com"]
+    verifiable: false
+    catch_all_prone: false
+    notes: "Google accepts almost every probe and decides after the message body."
+    canonical:
+      ignore_dots: true
+      strip_plus: true
+      domain_aliases:
+        googlemail.com: gmail.com
+
+  - name: microsoft
+    domains: [outlook.com, hotmail.com, live.com, msn.com, hotmail.co.uk, live.co.uk]
+    mx_patterns: ["*.outlook.com", "*.protection.outlook.com", "*.hotmail.com"]
+    verifiable: false
+    catch_all_prone: false
+    notes: "Microsoft does not expose mailbox existence at RCPT TO."
+    canonical:
+      strip_plus: true
+
+  - name: yahoo
+    domains: [yahoo.com, ymail.com, rocketmail.com, aol.com]
+    mx_patterns: ["*.yahoodns.net", "*.yahoo.com", "*.aol.com"]
+    verifiable: false
+    catch_all_prone: false
+    notes: "Yahoo and AOL do not answer mailbox existence reliably."
+    canonical: {}
+
+  - name: icloud
+    domains: [icloud.com, me.com, mac.com]
+    mx_patterns: ["*.mail.icloud.com"]
+    verifiable: false
+    catch_all_prone: false
+    notes: "Apple iCloud does not expose mailbox existence reliably."
+    canonical:
+      strip_plus: true
+
+  - name: proton
+    domains: [proton.me, protonmail.com, pm.me]
+    mx_patterns: ["*.protonmail.ch", "*.proton.me"]
+    verifiable: false
+    catch_all_prone: false
+    notes: "Proton does not expose mailbox existence at RCPT TO."
+    canonical:
+      strip_plus: true

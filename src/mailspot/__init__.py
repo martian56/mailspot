@@ -1,5 +1,3 @@
-"""mailspot: find and verify work email addresses, with no API keys."""
-
 from __future__ import annotations
 
 from .errors import ConfigurationError, MailspotError
@@ -13,7 +11,9 @@ from .models import (
     Status,
     VerificationResult,
 )
+from .normalize import canonical
 from .options import Options, ProbeIdentity
+from .suggest import suggest
 
 __all__ = [
     "Candidate",
@@ -28,6 +28,8 @@ __all__ = [
     "ProbeIdentity",
     "Status",
     "VerificationResult",
+    "canonical",
+    "suggest",
 ]
 
 __version__ = "0.1.0"

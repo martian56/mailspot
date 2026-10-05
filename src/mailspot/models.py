@@ -1,9 +1,3 @@
-"""The result types and the enums that make up a verdict.
-
-Both result types are pydantic models, so they serialize to JSON and validate
-themselves. They carry the evidence behind the headline, not just the headline.
-"""
-
 from __future__ import annotations
 
 from enum import StrEnum

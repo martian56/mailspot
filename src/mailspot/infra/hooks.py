@@ -1,10 +1,3 @@
-"""Observability hooks.
-
-Plain callbacks a caller supplies to watch what the library does. They never
-change behaviour, and an exception inside one is swallowed so a broken hook can
-never fail a verification.
-"""
-
 from __future__ import annotations
 
 import contextlib
@@ -38,6 +31,5 @@ class Hooks:
             return
         event = Event(kind=kind, target=target, detail=detail, duration_ms=duration_ms)
         for listen in self._listeners:
-            # A hook is for watching, never for steering. Its failure is its own.
             with contextlib.suppress(Exception):
                 listen(event)

@@ -1,9 +1,3 @@
-"""Caller-facing configuration, plus the seams that make the core testable.
-
-Every public call takes an Options. The network-facing fields (resolver, prober,
-clock) default to the real implementations and are swapped for fakes in tests.
-"""
-
 from __future__ import annotations
 
 from collections.abc import Sequence
@@ -40,8 +34,6 @@ class Options:
     hooks: Hooks = field(default_factory=Hooks)
     provider_overrides: Sequence[object] = ()
     providers: Sequence[object] = ()
-
-    # Injected collaborators. None means "build the real one".
     resolver: Resolver | None = None
     prober: SmtpProber | None = None
     clock: Clock | None = None
@@ -58,5 +50,4 @@ class Options:
                 raise ConfigurationError(f"{name} must be greater than 0")
 
     def with_(self, **changes: object) -> Options:
-        """Return a copy with some fields replaced."""
         return replace(self, **changes)
