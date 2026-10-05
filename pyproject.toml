@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mailspot"
+version = "0.1.0"
+description = "Find and verify work email addresses, with no API keys."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Fuad Alizada", email = "fuadelizade6@gmail.com" }]
+keywords = ["email", "verification", "smtp", "deliverability", "finder"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications :: Email",
+]
+dependencies = [
+    "dnspython>=2.6",
+    "aiosmtplib>=3.0",
+    "python-socks[asyncio]>=2.4",
+    "pydantic>=2.6",
+    "typer>=0.12",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-bdd>=7.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "types-PyYAML",
+]
+
+[project.scripts]
+mailspot = "mailspot.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/martian56/mailspot"
+Source = "https://github.com/martian56/mailspot"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mailspot"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+bdd_features_base_dir = "features"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+packages = ["mailspot"]
