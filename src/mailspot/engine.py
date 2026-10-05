@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .checks.catch_all import check_catch_all
+from .checks.catch_all import CatchAllProbe, check_catch_all
 from .checks.classify import classify
 from .checks.mx import check_mx
 from .checks.smtp import probe_mailbox
@@ -40,9 +40,11 @@ async def verify_one(email: str, runtime: Runtime) -> VerificationResult:
     if mx.found and not answer.transient_error:
         host = mx.hosts[0]
         proxy = runtime.pick_proxy()
-        catch_all = await _detect_catch_all(domain, host, provider, runtime, proxy)
+        probe = await _detect_catch_all(domain, host, provider, runtime, proxy)
+        if probe is not None:
+            catch_all = probe.check
         smtp, deferred = await _probe(
-            domain, host, syntax.normalized, provider, catch_all, runtime, proxy
+            domain, host, syntax.normalized, provider, probe, runtime, proxy
         )
 
     evidence = Evidence(
@@ -73,12 +75,12 @@ async def _resolve_mx(domain: str, runtime: Runtime) -> MxEntry:
 
 async def _detect_catch_all(
     domain: str, host: str, provider: EmailProvider, runtime: Runtime, proxy: str | None
-) -> CatchAllCheck:
+) -> CatchAllProbe | None:
     options = runtime.options
     if not (options.smtp_enabled and options.catch_all_enabled and provider.verifiable):
-        return CatchAllCheck()
+        return None
 
-    async def factory() -> CatchAllCheck:
+    async def factory() -> CatchAllProbe:
         await runtime.limiter.acquire(domain)
         return await check_catch_all(host, domain, runtime.prober, options, proxy=proxy)
 
@@ -90,13 +92,16 @@ async def _probe(
     host: str,
     address: str,
     provider: EmailProvider,
-    catch_all: CatchAllCheck,
+    probe: CatchAllProbe | None,
     runtime: Runtime,
     proxy: str | None,
 ) -> tuple[SmtpCheck, bool]:
+    catch_all = probe.check if probe is not None else CatchAllCheck()
     reason = _smtp_skip_reason(runtime, provider, catch_all)
     if reason is not None:
         return SmtpCheck(attempted=False, skipped_reason=reason), False
+    if probe is not None and not probe.reachable:
+        return SmtpCheck(attempted=False, skipped_reason="could not reach the mail host"), False
 
     await runtime.limiter.acquire(domain)
     smtp, deferred = await probe_mailbox(
