@@ -4,7 +4,7 @@ from collections.abc import Sequence
 
 from .engine import verify_one
 from .errors import ConfigurationError
-from .models import Candidate, FinderMethod, FinderResult, Status
+from .models import Candidate, FinderMethod, FinderResult, Status, VerificationResult
 from .normalize import split_address
 from .patterns import NameParts, catalogue, matching_keys, parse_name
 from .patterns import by_key as pattern_by_key
@@ -12,6 +12,15 @@ from .resources import read_lines
 from .runtime import Runtime
 
 Sample = tuple[str, str]
+
+
+def _cannot_distinguish(result: VerificationResult) -> bool:
+    smtp = result.checks.smtp
+    return (
+        result.checks.catch_all.is_catch_all is True
+        or not smtp.attempted
+        or smtp.deliverable is None
+    )
 
 
 def _detect_pattern(samples: Sequence[Sample]) -> str | None:
@@ -70,14 +79,14 @@ async def find_one(
 
     candidates: list[Candidate] = []
     best: Candidate | None = None
-    for key, local in _ordered_locals(parts, detected):
+    for index, (key, local) in enumerate(_ordered_locals(parts, detected)):
         result = await verify_one(f"{local}@{domain}", runtime)
         candidate = Candidate(email=f"{local}@{domain}", pattern=key, result=result)
         candidates.append(candidate)
-        if result.checks.catch_all.is_catch_all is True:
+        if result.status is Status.VALID:
             best = candidate
             break
-        if result.status is Status.VALID:
+        if index == 0 and _cannot_distinguish(result):
             best = candidate
             break
 
