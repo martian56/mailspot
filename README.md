@@ -44,6 +44,19 @@ Port 25 is blocked on most clouds and a lot of ISPs, and Google/Microsoft greyli
 
 mailspot does DNS and SMTP lookups you ask for, against domains you pick. It ships no contact data and collects nothing on its own. If you process data about real people you have obligations under GDPR, CAN-SPAM and the like. That's on you, the operator. The defaults are polite (bounded concurrency, per-domain rate limiting, timeouts); leave them that way unless you have a reason not to.
 
+## Releasing
+
+Bump `version` in `pyproject.toml`, commit, then tag and push:
+
+```
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+The publish workflow builds and uploads to PyPI on any `v*` tag, and fails if the
+tag does not match the version in `pyproject.toml`, so the two never drift apart.
+
 ## License
 
 MIT.
+

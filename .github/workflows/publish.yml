@@ -1,0 +1,37 @@
+name: publish
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify tag matches package version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(grep -m1 -E '^version = ' pyproject.toml | sed -E 's/version = "(.+)"/\1/')"
+          echo "tag=$tag version=$version"
+          if [ "$tag" != "$version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match pyproject version $version" >&2
+            exit 1
+          fi
+      - name: Build
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+      - name: Check
+        run: |
+          python -m pip install twine
+          python -m twine check dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
