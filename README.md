@@ -21,10 +21,18 @@ print(guess.best.email)                      # jane.doe@acme.com
 
 ```
 $ mailspot verify jane.doe@acme.com
-jane.doe@acme.com  send  94  mailbox accepted on a non-catch-all domain
+jane.doe@acme.com  valid  send  94  the server accepted the mailbox on a domain that is not accept-all
+
+$ mailspot find --name "Jane Doe" --domain acme.com
+jane.doe@acme.com  94  via permutation
+
+$ mailspot suggest jane@gmial.com
+jane@gmail.com
 ```
 
-Most existing packages only verify a single address, run synchronously, and quietly lie about catch-all domains. mailspot finds and verifies, runs checks concurrently, and is honest when it can't be sure.
+Other commands: `mailspot canonical`, `mailspot bulk verify in.csv --column email --out out.csv`, and `mailspot bulk recheck out.csv`. Every command takes `--json`.
+
+Most existing packages only verify a single address, run synchronously, and quietly lie about catch-all domains. mailspot finds and verifies, runs checks concurrently, is provider-aware (it won't report a confident "valid" from Gmail or Outlook, which accept every probe), and is honest when it can't be sure.
 
 Not on PyPI yet.
 
